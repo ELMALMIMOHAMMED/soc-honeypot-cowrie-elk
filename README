@@ -1,0 +1,223 @@
+# SOC Honeypot Monitoring Lab  
+## Détection et analyse d’attaques SSH avec Cowrie et Elastic SIEM
+
+---
+
+## Présentation du projet
+
+Ce projet personnel consiste à concevoir et déployer un laboratoire SOC (Security Operations Center) orienté **Blue Team**, dédié à la détection et à l’analyse des attaques SSH à l’aide d’un honeypot.
+
+L’objectif est de simuler un environnement SOC réaliste permettant la collecte, la centralisation, la visualisation et l’analyse des activités malveillantes, en s’appuyant sur la stack Elastic.
+
+---
+
+## Objectifs du projet
+
+### Objectifs techniques
+- Déployer un honeypot SSH (Cowrie)
+- Collecter les logs d’attaques en temps réel
+- Centraliser les événements de sécurité dans Elasticsearch
+- Visualiser les attaques via Kibana
+
+### Objectifs SOC
+- Détecter les tentatives de brute force SSH
+- Analyser les commandes exécutées par les attaquants
+- Identifier les attaquants via fingerprint SSH (HASSH)
+- Simuler des scénarios de détection SOC réalistes
+
+---
+
+## Architecture du lab SOC
+
+### Composants
+- **Cowrie** : Honeypot SSH pour capturer les tentatives d’authentification, les sessions et les commandes
+- **Filebeat** : Collecte et envoi des logs Cowrie
+- **Elasticsearch** : Stockage et moteur de recherche des événements
+- **Kibana** : Visualisation, dashboards et analyse SOC
+- **Kali Linux** : Machine hôte
+- **Conteneurs Podman** : Simulation de plusieurs sources d’attaque
+
+### Schéma du laboratoire
+
+# SOC Honeypot Monitoring Lab  
+## Détection et analyse d’attaques SSH avec Cowrie et Elastic SIEM
+
+---
+
+## Présentation du projet
+
+Ce projet personnel consiste à concevoir et déployer un laboratoire SOC (Security Operations Center) orienté **Blue Team**, dédié à la détection et à l’analyse des attaques SSH à l’aide d’un honeypot.
+
+L’objectif est de simuler un environnement SOC réaliste permettant la collecte, la centralisation, la visualisation et l’analyse des activités malveillantes, en s’appuyant sur la stack Elastic.
+
+---
+
+## Objectifs du projet
+
+### Objectifs techniques
+- Déployer un honeypot SSH (Cowrie)
+- Collecter les logs d’attaques en temps réel
+- Centraliser les événements de sécurité dans Elasticsearch
+- Visualiser les attaques via Kibana
+
+### Objectifs SOC
+- Détecter les tentatives de brute force SSH
+- Analyser les commandes exécutées par les attaquants
+- Identifier les attaquants via fingerprint SSH (HASSH)
+- Simuler des scénarios de détection SOC réalistes
+
+---
+
+## Architecture du lab SOC
+
+### Composants
+- **Cowrie** : Honeypot SSH pour capturer les tentatives d’authentification, les sessions et les commandes
+- **Filebeat** : Collecte et envoi des logs Cowrie
+- **Elasticsearch** : Stockage et moteur de recherche des événements
+- **Kibana** : Visualisation, dashboards et analyse SOC
+- **Kali Linux** : Machine hôte
+- **Conteneurs Podman** : Simulation de plusieurs sources d’attaque
+
+### Schéma du laboratoire
++-----------------------------+
+| Attaquants simulés |
+| |
+| - Kali Linux |
+| - Conteneurs Podman |
++--------------+--------------+
+|
+| Connexions SSH
+v
++-----------------------------+
+| Honeypot SSH Cowrie |
+| Port 2222 |
+| |
+| - Brute force SSH |
+| - Sessions |
+| - Commandes attaquants |
++--------------+--------------+
+|
+| Logs JSON
+v
++-----------------------------+
+| Filebeat |
+| |
+| - Collecte cowrie.json |
+| - Parsing & normalisation |
++--------------+--------------+
+|
+| Envoi des logs
+v
++-----------------------------+
+| Elasticsearch |
+| |
+| - Indexation |
+| - Recherche & corrélation |
++--------------+--------------+
+|
+| Analyse SOC
+v
++-----------------------------+
+| Kibana |
+| |
+| - Dashboards SOC |
+| - Détection & alertes |
+| - Investigation |
++-----------------------------+
+
+
+---
+
+## Collecte et normalisation des logs
+
+Cowrie génère des logs JSON structurés contenant :
+- Tentatives d’authentification SSH
+- Cycle de vie des sessions
+- Commandes exécutées par les attaquants
+- Informations sur les clients SSH
+
+Filebeat est configuré pour :
+- Collecter les logs Cowrie
+- Parser les événements JSON
+- Normaliser les champs selon le modèle ECS
+- Enrichir les événements
+- Envoyer les données vers Elasticsearch
+
+---
+
+## Analyse SOC et dashboards
+
+Plusieurs dashboards orientés SOC ont été créés dans Kibana afin d’analyser l’activité malveillante :
+
+- Activité SSH dans le temps
+- Sources d’attaque les plus actives
+- Analyse des empreintes SSH (HASSH)
+- Analyse des commandes post-exploitation
+
+---
+
+## Identification des attaquants avec HASSH
+
+Dans des environnements NAT ou conteneurisés, plusieurs attaquants peuvent apparaître sous une même adresse IP.
+
+Pour pallier cette limitation, le projet exploite **HASSH**, une technique de fingerprinting SSH basée sur les algorithmes utilisés par le client SSH (échange de clés, chiffrement, authentification).
+
+### Avantages :
+- Identification des attaquants indépendamment de l’adresse IP
+- Détection d’outils d’attaque récurrents
+- Analyse comportementale plus fiable
+
+---
+
+## Cas d’usage SOC
+
+Les cas d’usage suivants ont été implémentés ou conçus :
+
+- Détection des attaques par brute force SSH
+- Analyse des commandes post-exploitation
+- Identification des attaquants persistants via HASSH
+- Analyse temporelle des attaques
+- Conception de règles de détection SOC (Elastic Security)
+
+Ces cas d’usage sont alignés avec les bonnes pratiques SOC et le framework MITRE ATT&CK.
+
+---
+
+## Limites du projet
+
+- Projet orienté détection et analyse uniquement
+- Pas de réponse automatique ou de SOAR
+- Environnement de laboratoire (non production)
+
+Ces limites sont volontairement acceptées afin de privilégier la compréhension et la fiabilité SOC.
+
+---
+
+## Améliorations futures
+
+- Mise en place complète des alertes SOC
+- Intégration du Case Management Elastic
+- Enrichissement avec des flux de Threat Intelligence
+- Déploiement de honeypots supplémentaires (HTTP, FTP)
+- Corrélation avancée multi-étapes
+
+---
+
+## Compétences et technologies
+
+- SOC / Blue Team
+- Honeypot (Cowrie)
+- Elastic Stack (Elasticsearch, Kibana, Filebeat)
+- Analyse de logs et détection d’attaques
+- Analyse des attaques SSH
+- Framework MITRE ATT&CK
+- Linux et conteneurs (Podman)
+
+---
+
+## Avertissement
+
+Ce projet est réalisé exclusivement à des fins pédagogiques et défensives.  
+Aucune attaque n’a été menée contre des systèmes ou réseaux réels.
+
+
